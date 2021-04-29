@@ -9,6 +9,9 @@
                         <field name="start_date" autocomplete="off"/>
                         <field name="end_date" autocomplete="off"/>
                     </group>
+                    <footer>
+                        <button name="export_report" string="Print" type="object" class="btn-primary"/>
+                    </footer>
                 </form>
             </field>
         </record>

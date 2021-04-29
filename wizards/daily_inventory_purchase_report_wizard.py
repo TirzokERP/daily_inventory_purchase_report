@@ -3,8 +3,8 @@ from odoo import models, fields, api
 
 class DailyInventoryPurchaseReportWizard(models.TransientModel):
     _name = 'daily_inventory_purchase_report.wizard'
-    start_date = fields.Datetime(required=True)
-    end_date = fields.Datetime(required=True)
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)
 
     @api.onchange('start_date')
     def _onchange_start_date(self):
@@ -15,3 +15,6 @@ class DailyInventoryPurchaseReportWizard(models.TransientModel):
     def _onchange_end_date(self):
         if self.end_date and self.end_date < self.start_date:
             self.start_date = self.end_date
+
+    def export_report(self):
+        return self.env.ref('daily_inventory_purchase_report.sale_purchase_report').report_action(self)
