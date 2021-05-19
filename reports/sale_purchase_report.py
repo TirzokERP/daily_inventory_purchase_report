@@ -98,7 +98,7 @@ class SalePurchaseReportXlsx(models.AbstractModel):
             else:
                 report_name = f'Sales, purchase and inventory report from {obj.start_date} to {obj.end_date}'
             sheet = workbook.add_worksheet(report_name)
-            sheet.merge_range('A1:E3', report_name, wbf['title_doc'])
+            sheet.merge_range('A1:G3', report_name, wbf['title_doc'])
             if obj.location_ids:
                 query = f"""
                            SELECT
