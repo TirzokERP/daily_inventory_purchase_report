@@ -17,12 +17,12 @@
         </record>
 
         <record id="action_daily_inventory_purchase_report" model="ir.actions.act_window">
-            <field name="name">Purchase Inventory Report</field>
+            <field name="name">Sales,purchase and inventory report</field>
             <field name="res_model">daily_inventory_purchase_report.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-        <menuitem id="menu_report_order_details" name="Purchase inventory report"
-                  action="action_daily_inventory_purchase_report" parent="point_of_sale.menu_point_rep" sequence="100"/>
+        <menuitem id="menu_report_order_details" name="sales,purchase and inventory report"
+                  action="action_daily_inventory_purchase_report" parent="sale.menu_sale_report" sequence="100"/>
     </data>
 </odoo>

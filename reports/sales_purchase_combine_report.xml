@@ -6,5 +6,5 @@
        model="daily_inventory_purchase_report.wizard"
        report_type="xlsx"
        name="daily_inventory_purchase_report.sale_purchase_report"
-       file="daily_inventory_purchase_report.sale_purchase_report_xlsx"/>
+       file="sales,purchase and inventory report"/>
 </odoo>

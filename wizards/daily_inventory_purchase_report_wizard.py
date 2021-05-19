@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from odoo import models, fields, api
+from odoo.tools import float_round
 
 
 class DailyInventoryPurchaseReportWizard(models.TransientModel):
