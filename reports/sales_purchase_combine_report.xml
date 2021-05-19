@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+   <report
+       id="daily_inventory_purchase_report.sale_purchase_report"
+       string="Sales purchase combine report"
+       model="daily_inventory_purchase_report.wizard"
+       report_type="xlsx"
+       name="daily_inventory_purchase_report.sale_purchase_report"
+       file="sales,purchase and inventory report"/>
+</odoo>

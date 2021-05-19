@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <record id="daily_inventory_purchase_report_wizard_form" model="ir.ui.view">
+            <field name="name">daily_inventory_purchase_report.appointment.form</field>
+            <field name="model">daily_inventory_purchase_report.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                   <group>
+                        <field name="start_date" autocomplete="off"/>
+                        <field name="end_date" autocomplete="off"/>
+                    </group>
+                    <footer>
+                        <button name="export_report" string="Print" type="object" class="btn-primary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_daily_inventory_purchase_report" model="ir.actions.act_window">
+            <field name="name">Sales,purchase and inventory report</field>
+            <field name="res_model">daily_inventory_purchase_report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="menu_report_order_details" name="sales,purchase and inventory report"
+                  action="action_daily_inventory_purchase_report" parent="sale.menu_sale_report" sequence="100"/>
+    </data>
+</odoo>
