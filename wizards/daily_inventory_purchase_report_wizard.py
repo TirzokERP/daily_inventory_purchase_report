@@ -8,6 +8,8 @@ class DailyInventoryPurchaseReportWizard(models.TransientModel):
     _name = 'daily_inventory_purchase_report.wizard'
     start_date = fields.Date(required=True)
     end_date = fields.Date(required=True)
+    location_ids = fields.Many2many('stock.location', 'report_stock_location_rel', 'report_id',
+                                    'location_id', 'Locations')
 
     @api.onchange('start_date')
     def _onchange_start_date(self):
