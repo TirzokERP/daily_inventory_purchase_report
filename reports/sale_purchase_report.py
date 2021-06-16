@@ -121,31 +121,42 @@ class SalePurchaseReportXlsx(models.AbstractModel):
 
             sheet.set_column(0, 0, 30)
             sheet.set_column(1, 4, 20)
+            sheet.set_column(1, 5, 20)
+            sheet.set_column(1, 6, 20)
 
             sheet.write(4, 0, 'Product Name', wbf['header'])
             sheet.write(4, 1, 'Inventory', wbf['header'])
             sheet.write(4, 2, 'Purchased quantity', wbf['header'])
             sheet.write(4, 3, 'Sale quantity', wbf['header'])
             sheet.write(4, 4, 'Previous inventory', wbf['header'])
+            sheet.write(4, 5, 'Inventory IN', wbf['header'])
+            sheet.write(4, 6, 'Inventory OUT', wbf['header'])
             row = 5
 
             total_present_inventory = 0
             total_purchase_quantity = 0
             total_sale_quantity = 0
             total_previous_inventory = 0
+            total_present_inventory_in = 0
+            total_present_inventory_out = 0
 
             for product in products:
                 lot_id = product._context.get('lot_id')
                 owner_id = product._context.get('owner_id')
                 package_id = product._context.get('package_id')
-                present_inventory = product.with_context(location=obj.location_ids.ids) \
+                previous_inventory_dict = product.with_context(location=obj.location_ids.ids)\
+                    ._compute_quantities_dict(lot_id, owner_id, package_id, to_date=(obj.start_date))[product.id]
+
+                present_inventory_dict = product.with_context(location=obj.location_ids.ids)\
                     ._compute_quantities_dict(lot_id, owner_id, package_id, obj.start_date,
-                                              obj.end_date + datetime.timedelta(days=1))[product.id]['qty_available']
-                previous_inventory = \
-                    product.with_context(location=obj.location_ids.ids)._compute_quantities_dict(lot_id, owner_id,
-                                                                                             package_id,
-                                                                                             to_date=(obj.start_date))[
-                        product.id]['qty_available']
+                                              obj.end_date + datetime.timedelta(days=1))[product.id]
+
+                present_inventory = present_inventory_dict['qty_available']
+                present_inventory_in = present_inventory_dict['incoming_qty']
+                present_inventory_out = present_inventory_dict['outgoing_qty']
+
+                previous_inventory = previous_inventory_dict['qty_available']
+
 
                 purchased_quantity = \
                     product._compute_date_range_purchased_product_qty(obj.start_date, obj.end_date)[product.id][
@@ -158,12 +169,16 @@ class SalePurchaseReportXlsx(models.AbstractModel):
                 total_sale_quantity += sale_quantity
                 total_previous_inventory += previous_inventory
                 total_present_inventory += present_inventory
+                total_present_inventory_in += present_inventory_in
+                total_present_inventory_out += present_inventory_out
                 # -------------------------
                 sheet.write(row, 0, product.product_tmpl_id.name, wbf['content'])
                 sheet.write(row, 1, present_inventory, wbf['content_number'])
                 sheet.write(row, 2, purchased_quantity, wbf['content_number'])
                 sheet.write(row, 3, sale_quantity, wbf['content_number'])
                 sheet.write(row, 4, previous_inventory, wbf['content_number'])
+                sheet.write(row, 5, present_inventory_in, wbf['content_number'])
+                sheet.write(row, 6, present_inventory_out, wbf['content_number'])
                 row += 1
 
             # Total calculation row
@@ -173,5 +188,7 @@ class SalePurchaseReportXlsx(models.AbstractModel):
             sheet.write(next_row, 2, total_purchase_quantity, wbf['total_number'])
             sheet.write(next_row, 3, total_sale_quantity, wbf['total_number'])
             sheet.write(next_row, 4, total_previous_inventory, wbf['total_number'])
+            sheet.write(next_row, 5, total_present_inventory_in, wbf['total_number'])
+            sheet.write(next_row, 6, total_present_inventory_out, wbf['total_number'])
 
         workbook.close()
