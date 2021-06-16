@@ -138,11 +138,14 @@ class SalePurchaseReportXlsx(models.AbstractModel):
                 lot_id = product._context.get('lot_id')
                 owner_id = product._context.get('owner_id')
                 package_id = product._context.get('package_id')
-                present_inventory = product._compute_quantities_dict(lot_id, owner_id, package_id, obj.start_date,
-                                                                     obj.end_date + datetime.timedelta(days=1))[
-                    product.id]['qty_available']
-                previous_inventory = product._compute_quantities_dict(lot_id, owner_id, package_id, to_date=(
-                    obj.start_date))[product.id]['qty_available']
+                present_inventory = product.with_context(location=obj.location_ids.ids) \
+                    ._compute_quantities_dict(lot_id, owner_id, package_id, obj.start_date,
+                                              obj.end_date + datetime.timedelta(days=1))[product.id]['qty_available']
+                previous_inventory = \
+                    product.with_context(location=obj.location_ids.ids)._compute_quantities_dict(lot_id, owner_id,
+                                                                                             package_id,
+                                                                                             to_date=(obj.start_date))[
+                        product.id]['qty_available']
 
                 purchased_quantity = \
                     product._compute_date_range_purchased_product_qty(obj.start_date, obj.end_date)[product.id][
