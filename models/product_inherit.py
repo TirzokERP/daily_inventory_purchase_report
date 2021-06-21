@@ -9,9 +9,11 @@ class ProductInherit(models.Model):
 
     def _compute_date_range_purchased_product_qty(self, from_date=None, to_date=None):
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
+        location_ids = self.env.context.get('location')
         domain = [
             ('state', 'in', ['purchase', 'done']),
-            ('product_id', 'in', self.ids)
+            ('product_id', 'in', self.ids),
+            ('move_ids.location_dest_id.id', 'in', location_ids)
         ]
         if from_date:
             domain.append(('date_order', '>=', from_date))
@@ -38,11 +40,14 @@ class ProductInherit(models.Model):
         self.sales_count = 0
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
 
-        done_states = self.env['sale.report']._get_done_states()
 
+        done_states = self.env['sale.report']._get_done_states()
+        location_ids = self.env.context.get('location')
+        ware_house_ids = [item.get_warehouse().id for item in location_ids]
         domain = [
             ('state', 'in', done_states),
-            ('product_id', 'in', self.ids)
+            ('product_id', 'in', self.ids),
+            ('warehouse_id', 'in', ware_house_ids)
         ]
 
         if from_date:
@@ -62,13 +67,15 @@ class ProductInherit(models.Model):
             res[product.id]['date_range_sale_quantity'] = float_round(r.get(product.id, 0), precision_rounding=product.uom_id.rounding)
         return res
 
+
     def _compute_date_range_warehouse_transfer_count(self, from_date=None, to_date=None, location_ids=None):
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
+        location_ids = self.env.context.get('location')
         domain = [
             ('state', '=', 'done'),
             ('product_id', 'in', self.ids),
+            ('location_id.usage', '=', 'internal'),
             ('location_dest_id.usage', '=', 'internal'),
-            # ('location_id.usage', '=', 'internal'),
             ('location_dest_id', '!=', 'location_id')
         ]
         if location_ids:

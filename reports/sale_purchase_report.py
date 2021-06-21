@@ -144,26 +144,29 @@ class SalePurchaseReportXlsx(models.AbstractModel):
                 lot_id = product._context.get('lot_id')
                 owner_id = product._context.get('owner_id')
                 package_id = product._context.get('package_id')
-                previous_inventory_dict = product.with_context(location=obj.location_ids.ids)\
+                previous_inventory_dict = product.with_context(location=obj.location_ids.ids) \
                     ._compute_quantities_dict(lot_id, owner_id, package_id, to_date=(obj.start_date))[product.id]
 
-                present_inventory_dict = product.with_context(location=obj.location_ids.ids)\
+                present_inventory_dict = product.with_context(location=obj.location_ids.ids) \
                     ._compute_quantities_dict(lot_id, owner_id, package_id, obj.start_date,
                                               obj.end_date + datetime.timedelta(days=1))[product.id]
 
                 present_inventory = present_inventory_dict['qty_available']
-                warehouse_transfer_count = product._compute_date_range_warehouse_transfer_count(obj.start_date, obj.end_date, obj.location_ids.ids)
+                warehouse_transfer_count = product.with_context(
+                    location=obj.location_ids.ids)._compute_date_range_warehouse_transfer_count(obj.start_date,
+                                                                                                obj.end_date)
                 present_inventory_in = warehouse_transfer_count['total_in']
                 present_inventory_out = warehouse_transfer_count['total_out']
 
                 previous_inventory = previous_inventory_dict['qty_available']
 
-
                 purchased_quantity = \
-                    product._compute_date_range_purchased_product_qty(obj.start_date, obj.end_date)[product.id][
-                        'date_range_purchase_quantity']
-                sale_quantity = product._compute_date_range_sales_count(obj.start_date, obj.end_date)[product.id][
-                    'date_range_sale_quantity']
+                    product.with_context(location=obj.location_ids.ids)._compute_date_range_purchased_product_qty(
+                        obj.start_date, obj.end_date)[product.id]['date_range_purchase_quantity']
+                sale_quantity = \
+                product.with_context(location=obj.location_ids)._compute_date_range_sales_count(obj.start_date,
+                                                                                                    obj.end_date)[
+                    product.id]['date_range_sale_quantity']
 
                 # Total calculation
                 total_purchase_quantity += purchased_quantity
