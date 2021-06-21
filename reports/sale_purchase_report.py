@@ -152,8 +152,9 @@ class SalePurchaseReportXlsx(models.AbstractModel):
                                               obj.end_date + datetime.timedelta(days=1))[product.id]
 
                 present_inventory = present_inventory_dict['qty_available']
-                present_inventory_in = present_inventory_dict['incoming_qty']
-                present_inventory_out = present_inventory_dict['outgoing_qty']
+                warehouse_transfer_count = product._compute_date_range_warehouse_transfer_count(obj.start_date, obj.end_date, obj.location_ids.ids)
+                present_inventory_in = warehouse_transfer_count['total_in']
+                present_inventory_out = warehouse_transfer_count['total_out']
 
                 previous_inventory = previous_inventory_dict['qty_available']
 
