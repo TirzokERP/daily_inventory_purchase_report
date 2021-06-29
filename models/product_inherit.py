@@ -1,11 +1,20 @@
 from datetime import timedelta
 
+import pytz
+
 from odoo import fields, models
 from odoo.tools import float_round
 
 
 class ProductInherit(models.Model):
     _inherit = 'product.product'
+
+    def _convert_to_utc_timezone_str(self, datetime_str):
+        user_timezone = pytz.timezone(self.env.user.tz)
+        converted_datetime = fields.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+        converted_datetime = user_timezone.localize(converted_datetime).astimezone(pytz.utc)
+        converted_date_time_str = fields.Datetime.to_string(converted_datetime)
+        return converted_date_time_str
 
     def _compute_date_range_purchased_product_qty(self, from_date=None, to_date=None):
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
@@ -16,14 +25,17 @@ class ProductInherit(models.Model):
             ('move_ids.location_dest_id.id', 'in', location_ids)
         ]
         if from_date:
+            from_date = self._convert_to_utc_timezone_str(f'{str(from_date)} 00:00:00')
             domain.append(('date_order', '>=', from_date))
         else:
             domain.append(('date_order', '>=', date_from))
         if to_date:
+            to_date = self._convert_to_utc_timezone_str(f'{str(to_date)} 23:59:00')
             domain.append(('date_order', '<=', to_date))
 
         # order_lines = self.env['purchase.order.line'].search(domain)
-        order_lines = self.env['purchase.order.line'].read_group(domain, ['product_id', 'product_uom_qty'], ['product_id'])
+        order_lines = self.env['purchase.order.line'].read_group(domain, ['product_id', 'product_uom_qty'],
+                                                                 ['product_id'])
         purchased_data = dict([(data['product_id'][0], data['product_uom_qty']) for data in order_lines])
         res = dict()
         for product in self:
@@ -31,7 +43,8 @@ class ProductInherit(models.Model):
             if not product.id:
                 res[product.id]['date_range_purchase_quantity'] = 0.0
                 continue
-            res[product.id]['date_range_purchase_quantity'] = float_round(purchased_data.get(product.id, 0), precision_rounding=product.uom_id.rounding)
+            res[product.id]['date_range_purchase_quantity'] = float_round(purchased_data.get(product.id, 0),
+                                                                          precision_rounding=product.uom_id.rounding)
         return res
 
     def _compute_date_range_sales_count(self, from_date=None, to_date=None):
@@ -39,7 +52,6 @@ class ProductInherit(models.Model):
         res = {}
         self.sales_count = 0
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
-
 
         done_states = self.env['sale.report']._get_done_states()
         location_ids = self.env.context.get('location')
@@ -51,10 +63,12 @@ class ProductInherit(models.Model):
         ]
 
         if from_date:
+            from_date = self._convert_to_utc_timezone_str(f'{str(from_date)} 00:00:00')
             domain.append(('date', '>=', from_date))
         else:
             domain.append(('date', '>=', date_from))
         if to_date:
+            to_date = self._convert_to_utc_timezone_str(f'{str(to_date)} 23:59:00')
             domain.append(('date', '<=', to_date))
 
         for group in self.env['sale.report'].read_group(domain, ['product_id', 'product_uom_qty'], ['product_id']):
@@ -64,9 +78,9 @@ class ProductInherit(models.Model):
             if not product.id:
                 res[product.id]['date_range_sale_quantity'] = 0.0
                 continue
-            res[product.id]['date_range_sale_quantity'] = float_round(r.get(product.id, 0), precision_rounding=product.uom_id.rounding)
+            res[product.id]['date_range_sale_quantity'] = float_round(r.get(product.id, 0),
+                                                                      precision_rounding=product.uom_id.rounding)
         return res
-
 
     def _compute_date_range_warehouse_transfer_count(self, from_date=None, to_date=None, location_ids=None):
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
@@ -83,10 +97,12 @@ class ProductInherit(models.Model):
             domain.append(('location_id', 'in', location_ids))
             domain.append(('location_dest_id', 'in', location_ids))
         if from_date:
+            from_date = self._convert_to_utc_timezone_str(f'{str(from_date)} 00:00:00')
             domain.append(('date', '>=', from_date))
         else:
             domain.append(('date', '>=', date_from))
         if to_date:
+            to_date = self._convert_to_utc_timezone_str(f'{str(to_date)} 23:59:00')
             domain.append(('date', '<=', to_date))
 
         Move = self.env['stock.move']
@@ -102,5 +118,3 @@ class ProductInherit(models.Model):
             'total_in': total_in,
             'total_out': total_out
         }
-
-
