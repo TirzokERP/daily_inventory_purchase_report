@@ -14,7 +14,7 @@
     """,
 
     'author': "Tirzok Private Limited",
-    "license":  "GPL-3",
+    "license":  "AGPL-3",
     'website': "https://tirzok.com",
 
     # Categories can be used to filter modules in modules listing
