@@ -39,9 +39,9 @@
         'demo/demo.xml',
     ],
 
-    "images":["static/description/Banner.png", "static/description/Icon.png"],
+    "images":["static/description/Banner.png"],
 
     "icon": "static/description/Icon.png",
 
-    "documentation": ["doc/user_guide.html"],
+    "documentation": ["static/description/user_guide.html"],
 }
