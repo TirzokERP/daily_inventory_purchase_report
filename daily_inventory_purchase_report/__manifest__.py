@@ -14,8 +14,8 @@
     """,
 
     'author': "Tirzok Private Limited",
-    "license":  "AGPL-3",
-    'website': "https://tirzok.com, https://tirzokerp.com",
+    "license":  "GPL-3",
+    'website': "https://tirzok.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
@@ -40,4 +40,8 @@
     ],
 
     "images":["static/description/Banner.png", "static/description/Icon.png"],
+
+    "icon": "static/description/Icon.png",
+
+    "documentation": ["doc/user_guide.html"],
 }
