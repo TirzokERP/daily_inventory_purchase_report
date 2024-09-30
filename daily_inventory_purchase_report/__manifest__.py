@@ -39,9 +39,16 @@
         'demo/demo.xml',
     ],
 
-    "images":["static/description/Banner.png"],
+    "images":[
+        "static/description/Banner.png",
+        "static/description/1.png",
+        "static/description/2.png",
+        "static/description/3.png",
+        "static/description/1.1.png",
+        "static/description/1.2.png",
+        "static/description/1.3.png",
+        "static/description/icon.png",
+    ],
 
-    "icon": "static/description/Icon.png",
-
-    "documentation": ["static/description/user_guide.html"],
+    "documentation": ["static/description/index.html"],
 }
