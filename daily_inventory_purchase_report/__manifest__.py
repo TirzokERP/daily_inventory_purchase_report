@@ -23,7 +23,7 @@
     'category': 'sales',
     'version': '13.0',
 
-    "live_test_url": "https://www.youtube.com/watch?v=3o7KR6p4l7Q",
+    "live_test_url": "https://youtu.be/u3GJce-mFh0",
     # any module necessary for this one to work correctly
     'depends': ['base', 'report_xlsx', 'stock', 'sale'],
 
